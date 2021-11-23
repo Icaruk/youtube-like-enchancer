@@ -1,7 +1,7 @@
 {
 	"name": "YT like-views relation",
 	"description": "Show the relation between likes and total views on a youtube video",
-	"version": "1.0",
+	"version": "1.0.1",
 	"manifest_version": 3,
 	"icons": {
 		"128": "logo/logo128.png",

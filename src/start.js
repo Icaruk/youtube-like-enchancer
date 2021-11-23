@@ -87,14 +87,14 @@ const addLikesData = () => {
 			span && span.remove();
 			span = null;
 			
-			addLikesData();
+			setTimeout(addLikesData, 1000);
 			
 		};
 	}).observe(document, { subtree: true, childList: true });
 	
 	
 	
-	document.addEventListener("readystatechange", ev => {
+	document.addEventListener("readystatechange", () => {
 		if (document.readyState !== "complete") return;
 		addLikesData();
 	});
