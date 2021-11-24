@@ -3,23 +3,23 @@ let span;
 
 
 
-const addLikesData = () => {
+const addLikesData = (borraSpan = false) => {
 	
-	let intervalMs = 250;
-	let totalMs = 0;
+	const intervalMs = 50;
+	let passedMs = 0;
 	
 	const interval = setInterval( () => {
 		
 		let views = document.querySelector("#count > ytd-video-view-count-renderer > span.view-count.style-scope.ytd-video-view-count-renderer");
 		
-		if (totalMs > 5000) {
+		if (passedMs > 5000) {
 			console.log( "Timeout" );
 			clearInterval(interval);
 			return;
 		};
 		
 		
-		totalMs += intervalMs;
+		passedMs += intervalMs;
 		
 		
 		
@@ -36,8 +36,20 @@ const addLikesData = () => {
 			
 			let likesNode = getElementByXpath("/html//div[@id='top-level-buttons-computed']/ytd-toggle-button-renderer[1]//yt-formatted-string[@id='text']");
 			
+			
 			let likes = likesNode.getAttribute("aria-label");
 			if (!likes) return console.log( "Likes not found" );
+			
+			console.log( "likesNode", `(${typeof likesNode}): `, likesNode);
+			
+			// Añado evento onclick
+			const ELClick = likesNode.parentElement.addEventListener("click", ev => {
+				
+				ev.target.removeEventListener("click", ELClick);
+				addLikesData(true);
+				
+			});
+			
 			
 			likes = likes.replace(/[^0-9]/g, "");
 			
@@ -50,7 +62,13 @@ const addLikesData = () => {
 			// Append span to likesNode
 			setTimeout( () => {
 				
-				span = document.getElementById("likes-data-ext");
+				if (borraSpan) {
+					span && span.remove();
+					span = null;
+				} else {
+					span = document.getElementById("likes-data-ext");
+				};
+					
 				
 				if (!span) {
 					span = document.createElement("span");
@@ -63,13 +81,14 @@ const addLikesData = () => {
 				
 				span.innerText = `(${relacion}%)`;
 				
-			}, 1000);
+			}, 1);
 			
 		};
 		
 	}, intervalMs);
 	
 };
+
 
 
 ( () => {
@@ -83,11 +102,7 @@ const addLikesData = () => {
 		if (url !== lastUrl) {
 			
 			lastUrl = url;
-			
-			span && span.remove();
-			span = null;
-			
-			setTimeout(addLikesData, 1000);
+			setTimeout( () => addLikesData(true), 1000);
 			
 		};
 	}).observe(document, { subtree: true, childList: true });
